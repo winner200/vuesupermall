@@ -1,0 +1,29 @@
+<template>
+  <div class="back-top" @click="backTopClick">
+    <img src="~assets/img/common/top.png" alt="">
+  </div>
+</template>
+
+<script>
+export default {
+  name: "BackTop",
+  methods: {
+    // backTopClick() {
+    //   console.log('点击回到顶部');
+    //   this.$emit('backTopClick')
+    // }
+  }
+}
+</script>
+
+<style scoped>
+  .back-top {
+    position: fixed;
+    right: 8px;
+    bottom: 55px;
+  }
+  .back-top img {
+    width: 43px;
+    height: 43px;
+  }
+</style>
