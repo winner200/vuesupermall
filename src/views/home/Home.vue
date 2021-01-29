@@ -5,14 +5,14 @@
         购物街
       </div>
     </nav-bar>
-    <scroll class="wrapper" ref="scroll">
+    <scroll class="wrapper" ref="scroll" :probe-type="3" @scroll="contentScroll">
       <home-swiper :banners="banners" />
       <home-recommend :recommends="recommends" />
       <home-popular />
       <tab-control class="tab-control" :titles="['流行', '新款', '精选']" @tabClick="tabClick" />
       <goods-list :goods="showGoods" />
     </scroll>
-    <back-top @click.native="backTopClick"/>
+    <back-top @click.native="backTopClick" v-show="isBackTopShow"/>
 	</div>
 </template>
 
@@ -52,7 +52,8 @@
           'new': {page: 0, lists: []},
           'sell': {page: 0, lists: []}
         },
-        currentType: 'pop'
+        currentType: 'pop',
+        isBackTopShow: false
       }
     },
     computed: {
@@ -75,7 +76,6 @@
       })
     },
     methods: {
-
 		  /**
        * 事件监听相关的方法
        */
@@ -100,6 +100,11 @@
       backTopClick() {
         console.log('监听返回到顶部')
         this.$refs.scroll.scrollTo(0, 0, 500)
+      },
+      // 返回顶部按钮隐藏与显示
+      contentScroll(position) {
+        console.log(position.y);
+        this.isBackTopShow = (-position.y) > 1000
       },
       /**
        * 网络请求相关方法
