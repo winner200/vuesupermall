@@ -19,6 +19,10 @@ export default {
     probeType: {
       type: Number,
       default: 0
+    },
+    pullUpload: {
+      type: Boolean,
+      default: false
     }
   },
   mounted() {
@@ -27,7 +31,7 @@ export default {
     this.scroll = new BetterScroll(this.$refs.wrapper, {
       click: true,
       probeType: this.probeType,
-      // pullUpLoad: true
+      pullUpLoad: this.pullUpload
       // listenScroll:true
     })
     // console.log('BetterScroll对象',this.scroll)
@@ -35,10 +39,15 @@ export default {
 
     // this.scroll.scrollTo(0, 0)
 
-    // 2. 监听滚动的位置
+    // 2.监听滚动的位置
     this.scroll.on('scroll', (position) => {
-      console.log('监听滚动位置',position);
+      // console.log('监听滚动位置',position);
       this.$emit('scroll', position)
+    })
+
+    // 3.监听上拉加载更多
+    this.scroll.on('pullingUp', ()=> {
+      console.log('上拉加载更多');
     })
   },
   methods: {

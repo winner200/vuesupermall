@@ -22,8 +22,8 @@ export default {
   },
   methods: {
     imageLoad() {
-      console.log('imageLoad')
-      console.log(this.$bus);
+      // console.log('imageLoad')
+      // console.log(this.$bus);
       this.$bus.$emit('goodsImageLoad')
     }
   }

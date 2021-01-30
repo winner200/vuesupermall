@@ -5,7 +5,11 @@
         购物街
       </div>
     </nav-bar>
-    <scroll class="wrapper" ref="scroll" :probe-type="3" @scroll="contentScroll">
+    <scroll class="wrapper"
+            ref="scroll"
+            :probe-type="3"
+            @scroll="contentScroll"
+            :pull-upload="true">
       <home-swiper :banners="banners" />
       <home-recommend :recommends="recommends" />
       <home-popular />
@@ -103,7 +107,7 @@
       },
       // 返回顶部按钮隐藏与显示
       contentScroll(position) {
-        console.log(position.y);
+        // console.log(position.y);
         this.isBackTopShow = (-position.y) > 1000
       },
       /**
