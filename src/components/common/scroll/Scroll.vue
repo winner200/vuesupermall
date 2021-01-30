@@ -48,6 +48,7 @@ export default {
     // 3.监听上拉加载更多
     this.scroll.on('pullingUp', ()=> {
       console.log('上拉加载更多');
+      this.$emit('pullingUp')
     })
   },
   methods: {

@@ -9,7 +9,8 @@
             ref="scroll"
             :probe-type="3"
             @scroll="contentScroll"
-            :pull-upload="true">
+            :pull-upload="true"
+            @pullingUp="pullingUp">
       <home-swiper :banners="banners" />
       <home-recommend :recommends="recommends" />
       <home-popular />
@@ -109,6 +110,13 @@
       contentScroll(position) {
         // console.log(position.y);
         this.isBackTopShow = (-position.y) > 1000
+      },
+      /*
+      * 上拉加载更多
+      */
+      pullingUp() {
+        console.log('首页加载更多');
+        this.getHomeGoods(this.currentType)
       },
       /**
        * 网络请求相关方法
