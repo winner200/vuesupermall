@@ -13,9 +13,9 @@
             @pullingUp="pullingUp">
       <home-swiper :banners="banners" />
       <home-recommend :recommends="recommends" />
-      <home-popular />
+      <home-popular/>
       <tab-control class="tab-control" :titles="['流行', '新款', '精选']" @tabClick="tabClick" />
-      <goods-list :goods="showGoods" />
+      <goods-list :goods="showGoods"/>
     </scroll>
     <back-top @click.native="backTopClick" v-show="isBackTopShow"/>
 	</div>
@@ -74,16 +74,34 @@
     },
     mounted() {
       //监听goodsItem图片加载完成
-      this.$bus.$on('goodsImageLoad', () => {
+     /* this.$bus.$on('goodsImageLoad', () => {
         console.log('-------');
         // console.log(this.$refs.scroll.refresh())
         this.$refs.scroll.refresh()
+      })*/
+
+      // 使用防抖动函数
+      const refresh = this.debounce(this.$refs.scroll.refresh, 500)
+      this.$bus.$on('goodsImageLoad', () => {
+        // console.log('-------');
+        // console.log(this.$refs.scroll.refresh())
+        // this.$refs.scroll.refresh()
+        refresh()
       })
     },
     methods: {
 		  /**
        * 事件监听相关的方法
        */
+		  debounce(func, delay) {
+        let timer = null
+        return function(...ages) {
+         if (timer) clearTimeout(timer)
+          timer = setTimeout(() => {
+            func.apply(this, ages)
+          }, delay)
+        }
+      },
 		  tabClick(index) {
         console.log(index);
         switch (index) {
@@ -117,6 +135,7 @@
       pullingUp() {
         console.log('首页加载更多');
         this.getHomeGoods(this.currentType)
+        this.$refs.scroll.scroll.refresh()
       },
       /**
        * 网络请求相关方法
@@ -139,6 +158,8 @@
           console.log('商品数据获取成功', res);
           this.goods[type].lists.push(...res.data.list)
           this.goods[type].page += 1
+
+          this.$refs.scroll.finishPullUp()
 
         }).catch(err => {
           console.log('商品数据获取失败', err);
