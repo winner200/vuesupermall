@@ -45,11 +45,13 @@ export default {
       this.$emit('scroll', position)
     })
 
-    // 3.监听上拉加载更多
-    this.scroll.on('pullingUp', ()=> {
-      console.log('上拉加载更多');
-      this.$emit('pullingUp')
-    })
+    // 3.监听scroll滚到到底部
+    if(this.pullUpload) {
+      this.scroll.on('pullingUp', ()=> {
+        console.log('上拉加载更多');
+        this.$emit('pullingUp')
+      })
+    }
   },
   methods: {
     scrollTo(x, y, time=300) {
