@@ -1,5 +1,10 @@
 <template>
-  <div class="border">
+  <!-- TODO
+  v-if="Object.keys(goodsInfo).length !==0" 如果要是不加这个，下面的v-for="index in goodsInfo.services.length-1"这就会报错，
+  会影响一定的性能，但是还没有找到好的解决方案。
+  1.使用了watch监听，但是还是有问题。
+  -->
+  <div class="border" v-if="Object.keys(goodsInfo).length !==0">
     <div class="title">
       <p>{{goodsInfo.title}}</p>
     </div>
@@ -12,7 +17,7 @@
       <span v-for="item in goodsInfo.columns">{{item}}</span>
     </div>
     <div class="after-sale">
-      <div v-for="index in goodsInfo.services.length-1">
+      <div v-for="index in goodsInfo.services.length-1" :key="index">
         <img :src="goodsInfo.services[index-1].icon" alt="">
         <span>{{goodsInfo.services[index-1].name}}</span>
       </div>
@@ -30,7 +35,26 @@ export default {
         return {}
       }
     }
-  }
+  },
+  data() {
+    return {
+      goods: {}
+    }
+  },
+  computed: {
+    goodsList() {
+      return this.goodsInfo
+    }
+  },
+  watch: {
+    goodsList: {
+      handler(newV, oldV) {
+        console.log('我是：newV',newV);
+        console.log('我是：oldV',oldV);
+      },
+      deep: true
+    }
+  },
 }
 </script>
 

@@ -12,14 +12,15 @@ import GoodsDetailNavBar from "./childComps/GoodsDetailNavBar";
 import GoodsDetailSwiper from "./childComps/GoodsDetailSwiper";
 import DetailBaseInfo from './childComps/DetailBaseInfo'
 
-import {getDetail, Goods} from 'network/detail'
+import {getDetail, Goods, Shop} from 'network/detail'
   export default {
     name: "Detail",
     data() {
       return {
         iid: null,
         topImages:[],
-        goods: {}
+        goods: {},
+        shop: {}
       }
     },
     components: {
@@ -44,6 +45,10 @@ import {getDetail, Goods} from 'network/detail'
 
           // 2.获取商品信息
           this.goods = new Goods(data.itemInfo, data.columns, data.shopInfo.services)
+
+          console.log('wdebug20210104', this.goods.services.length)
+          // 3.创建店铺基本信息
+          this.shop = new Shop(data.shopInfo)
 
         }).catch(error=> {
           console.log('商品详情数据请求失败', error)
