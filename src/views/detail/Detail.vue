@@ -1,8 +1,11 @@
 <template>
-  <div>
-    <goods-detail-nav-bar/>
-    <goods-detail-swiper :swiper-images="topImages"/>
-    <detail-base-info :goods-info="goods"/>
+  <div id="detail">
+    <goods-detail-nav-bar class="detail-nav"/>
+    <scroll class="content">
+      <goods-detail-swiper :swiper-images="topImages"/>
+      <detail-base-info :goods-info="goods"/>
+      <detail-shop-info :shop-info="shopInfo"/>
+    </scroll>
   </div>
 </template>
 
@@ -10,9 +13,11 @@
 
 import GoodsDetailNavBar from "./childComps/GoodsDetailNavBar";
 import GoodsDetailSwiper from "./childComps/GoodsDetailSwiper";
-import DetailBaseInfo from './childComps/DetailBaseInfo'
+import DetailBaseInfo from './childComps/DetailBaseInfo';
+import Scroll from "components/common/scroll/Scroll";
 
 import {getDetail, Goods, Shop} from 'network/detail'
+import DetailShopInfo from "./childComps/DetailShopInfo";
   export default {
     name: "Detail",
     data() {
@@ -20,13 +25,16 @@ import {getDetail, Goods, Shop} from 'network/detail'
         iid: null,
         topImages:[],
         goods: {},
-        shop: {}
+        shopInfo: {},
+        detailInfo: {}
       }
     },
     components: {
+      DetailShopInfo,
       GoodsDetailSwiper,
       GoodsDetailNavBar,
-      DetailBaseInfo
+      DetailBaseInfo,
+      Scroll
     },
     created() {
       console.log('-----',this.$route.params.iid)
@@ -48,7 +56,10 @@ import {getDetail, Goods, Shop} from 'network/detail'
 
           console.log('wdebug20210104', this.goods.services.length)
           // 3.创建店铺基本信息
-          this.shop = new Shop(data.shopInfo)
+          this.shopInfo = new Shop(data.shopInfo)
+
+          // 4.保存商品详情数据
+          this.detailInfo = data.detailInfo
 
         }).catch(error=> {
           console.log('商品详情数据请求失败', error)
@@ -59,5 +70,18 @@ import {getDetail, Goods, Shop} from 'network/detail'
 </script>
 
 <style scoped>
-
+  #detail {
+    position: relative;
+    z-index: 9;
+    background: #FFFFFF;
+    height: 100vh;
+  }
+  .detail-nav {
+    position: relative;
+    z-index: 9;
+    background: #FFFFFF;
+  }
+  .content {
+    height: calc(100% - 44px);
+  }
 </style>
