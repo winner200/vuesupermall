@@ -5,6 +5,7 @@
       <goods-detail-swiper :swiper-images="topImages"/>
       <detail-base-info :goods-info="goods"/>
       <detail-shop-info :shop-info="shopInfo"/>
+      <detail-goods-info :detail-info="detailInfo"/>
     </scroll>
   </div>
 </template>
@@ -14,6 +15,8 @@
 import GoodsDetailNavBar from "./childComps/GoodsDetailNavBar";
 import GoodsDetailSwiper from "./childComps/GoodsDetailSwiper";
 import DetailBaseInfo from './childComps/DetailBaseInfo';
+import DetailGoodsInfo from "./childComps/DetailGoodsInfo";
+
 import Scroll from "components/common/scroll/Scroll";
 
 import {getDetail, Goods, Shop} from 'network/detail'
@@ -34,6 +37,7 @@ import DetailShopInfo from "./childComps/DetailShopInfo";
       GoodsDetailSwiper,
       GoodsDetailNavBar,
       DetailBaseInfo,
+      DetailGoodsInfo,
       Scroll
     },
     created() {

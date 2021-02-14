@@ -51,7 +51,7 @@ export default {
 <style scoped>
   .shopInfo {
     width: 96%;
-    height: 500px;
+    height: 220px;
     margin: 0 auto;
     font-size: var(--font-size);
   }
