@@ -1,11 +1,12 @@
 <template>
   <div id="detail">
     <goods-detail-nav-bar class="detail-nav"/>
-    <scroll class="content">
+    <scroll class="content" ref="scroll">
       <goods-detail-swiper :swiper-images="topImages"/>
       <detail-base-info :goods-info="goods"/>
       <detail-shop-info :shop-info="shopInfo"/>
-      <detail-goods-info :detail-info="detailInfo"/>
+      <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoad"/>
+      <detail-param-info :goods-param="goodsParam" />
     </scroll>
   </div>
 </template>
@@ -16,10 +17,11 @@ import GoodsDetailNavBar from "./childComps/GoodsDetailNavBar";
 import GoodsDetailSwiper from "./childComps/GoodsDetailSwiper";
 import DetailBaseInfo from './childComps/DetailBaseInfo';
 import DetailGoodsInfo from "./childComps/DetailGoodsInfo";
+import DetailParamInfo from "./childComps/DetailParamInfo"
 
 import Scroll from "components/common/scroll/Scroll";
 
-import {getDetail, Goods, Shop} from 'network/detail'
+import {getDetail, Goods, Shop, GoodsParam} from 'network/detail'
 import DetailShopInfo from "./childComps/DetailShopInfo";
   export default {
     name: "Detail",
@@ -29,7 +31,8 @@ import DetailShopInfo from "./childComps/DetailShopInfo";
         topImages:[],
         goods: {},
         shopInfo: {},
-        detailInfo: {}
+        detailInfo: {},
+        goodsParam: {}
       }
     },
     components: {
@@ -38,6 +41,7 @@ import DetailShopInfo from "./childComps/DetailShopInfo";
       GoodsDetailNavBar,
       DetailBaseInfo,
       DetailGoodsInfo,
+      DetailParamInfo,
       Scroll
     },
     created() {
@@ -65,10 +69,17 @@ import DetailShopInfo from "./childComps/DetailShopInfo";
           // 4.保存商品详情数据
           this.detailInfo = data.detailInfo
 
+          // 5.保存商品参数信息
+          this.goodsParam = new GoodsParam(data.itemParams.info, data.itemParams.rule)
+
         }).catch(error=> {
           console.log('商品详情数据请求失败', error)
         })
       },
+      // 监听图片是否加载完成
+      imageLoad() {
+        this.$refs.scroll.refresh()
+      }
     }
   }
 </script>
