@@ -31,7 +31,7 @@ export default {
 <style scoped>
   .param-size {
     width: 96%;
-    height: 100vh;
+    height: 100%;
     margin: 0 auto;
     margin-top: 10px;
     font-size: var(--font-size);
@@ -54,13 +54,13 @@ export default {
 
   .param-info {
     width: 100%;
-    height: 100vh;
     margin: 0 auto;
     margin-top: 25px;
   }
   .info-content {
-    height: 40px;
-    line-height: 22px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    display: block;
     border-bottom: 1px solid rgba(100,100,100,.1);
   }
   .info-td1 {

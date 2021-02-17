@@ -68,7 +68,8 @@
         isBackTopShow: false,
         tabOffsetTop: 0,
         isTabFixed: false,
-        saveY: 0
+        saveY: 0,
+        itemImgListener: null
       }
     },
     computed: {
@@ -94,6 +95,9 @@
       console.log(this.saveY);
       console.log('home -- deactivated')
 		  this.saveY = this.$refs.scroll.getScrollY()
+
+      // 取消全局事件监听
+      this.$bus.$off('goodsImageLoad', this.itemImgListener)
     },
     mounted() {
       //监听goodsItem图片加载完成
@@ -105,12 +109,22 @@
 
       // 使用防抖动函数
       const refresh = this.debounce(this.$refs.scroll.refresh, 500)
-      this.$bus.$on('goodsImageLoad', () => {
+
+      // this.$bus.$on('goodsImageLoad', () => {
+      //   // console.log('-------');
+      //   // console.log(this.$refs.scroll.refresh())
+      //   // this.$refs.scroll.refresh()
+      //   refresh()
+      // })
+
+      // 对监听事件保存
+      this.itemImgListener = () => {
         // console.log('-------');
         // console.log(this.$refs.scroll.refresh())
         // this.$refs.scroll.refresh()
         refresh()
-      })
+      }
+      this.$bus.$on('goodsImageLoad', this.itemImgListener)
     },
     methods: {
 		  /**

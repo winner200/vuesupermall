@@ -7,6 +7,8 @@
       <detail-shop-info :shop-info="shopInfo"/>
       <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoad"/>
       <detail-param-info :goods-param="goodsParam" />
+      <detail-coment-info :comment-info="commentInfo"/>
+      <goods-list :goods="recommends"/>
     </scroll>
   </div>
 </template>
@@ -17,13 +19,19 @@ import GoodsDetailNavBar from "./childComps/GoodsDetailNavBar";
 import GoodsDetailSwiper from "./childComps/GoodsDetailSwiper";
 import DetailBaseInfo from './childComps/DetailBaseInfo';
 import DetailGoodsInfo from "./childComps/DetailGoodsInfo";
-import DetailParamInfo from "./childComps/DetailParamInfo"
+import DetailShopInfo from "./childComps/DetailShopInfo";
+import DetailParamInfo from "./childComps/DetailParamInfo";
+import DetailCommentInfo from "./childComps/DetailCommentInfo";
+import DetailComentInfo from "./childComps/DetailCommentInfo";
 
 import Scroll from "components/common/scroll/Scroll";
+import GoodsList from "components/content/goods/GoodsList";
 
-import {getDetail, Goods, Shop, GoodsParam} from 'network/detail'
-import DetailShopInfo from "./childComps/DetailShopInfo";
-  export default {
+import {getDetail, Goods, Shop, GoodsParam, getRecommend} from 'network/detail'
+
+import {itemListenerMixin} from "common/mixin";
+
+export default {
     name: "Detail",
     data() {
       return {
@@ -32,23 +40,30 @@ import DetailShopInfo from "./childComps/DetailShopInfo";
         goods: {},
         shopInfo: {},
         detailInfo: {},
-        goodsParam: {}
+        goodsParam: {},
+        commentInfo: {},
+        recommends: []
       }
     },
+  mixins: [itemListenerMixin],
     components: {
+      DetailComentInfo,
       DetailShopInfo,
       GoodsDetailSwiper,
       GoodsDetailNavBar,
       DetailBaseInfo,
       DetailGoodsInfo,
       DetailParamInfo,
-      Scroll
+      DetailCommentInfo,
+      Scroll,
+      GoodsList,
     },
     created() {
       console.log('-----',this.$route.params.iid)
       // 1.保存iid
       this.iid = this.$route.params.iid
       this._getDetail()
+      this._getRecommend()
     },
     methods: {
       _getDetail() {
@@ -72,16 +87,38 @@ import DetailShopInfo from "./childComps/DetailShopInfo";
           // 5.保存商品参数信息
           this.goodsParam = new GoodsParam(data.itemParams.info, data.itemParams.rule)
 
+          // 6.取出评论信息
+          if(data.rate.cRate !== 0) {
+            this.commentInfo = data.rate.list[0]
+          }
+
         }).catch(error=> {
           console.log('商品详情数据请求失败', error)
         })
       },
+
+      // 获取推荐数据
+      _getRecommend() {
+        getRecommend().then(res => {
+          console.log('获取推荐数据成功', res)
+          this.recommends = res.data.list
+        }).catch(error=> {
+          console.log('获取推荐数据失败')
+        })
+      },
+
       // 监听图片是否加载完成
       imageLoad() {
-        this.$refs.scroll.refresh()
+        this.$refs.scroll.refresh(this.$refs.scroll.refresh, 500)
       }
+    },
+    mounted() {
+     console.log('我是正常mounted的内容')
+    },
+    destroyed() {
+      this.$bus.$off(this.itemImgListener)
     }
-  }
+}
 </script>
 
 <style scoped>
