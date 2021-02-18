@@ -5,6 +5,9 @@
             ref="scroll"
             @scroll="contentScroll"
             :probe-type="3">
+      <ul>
+        <li v-for="item in $store.state.cartList">{{item}}</li>
+      </ul>
       <goods-detail-swiper :swiper-images="topImages"/>
       <detail-base-info :goods-info="goods"/>
       <detail-shop-info :shop-info="shopInfo"/>
@@ -13,7 +16,8 @@
       <detail-coment-info ref="comment" :comment-info="commentInfo"/>
       <goods-list ref="recommend" :goods="recommends"/>
     </scroll>
-    <detail-bottom-bar class="bottom-bar"/>
+    <back-top @click.native="backTopClick" v-show="isBackTopShow"/>
+    <detail-bottom-bar class="bottom-bar" @addToCart="addToCart"/>
   </div>
 </template>
 
@@ -30,11 +34,12 @@ import DetailComentInfo from "./childComps/DetailCommentInfo";
 import DetailBottomBar from "./childComps/DetailBottomBar";
 
 import Scroll from "components/common/scroll/Scroll";
+
 import GoodsList from "components/content/goods/GoodsList";
 
 import {getDetail, Goods, Shop, GoodsParam, getRecommend} from 'network/detail'
 
-import {itemListenerMixin} from "common/mixin";
+import {itemListenerMixin, backTopMixin} from "common/mixin";
 
 import {debounce} from "common/utils";
 
@@ -52,10 +57,10 @@ export default {
         recommends: [],
         themeTopYs:[],
         getThemeTopY: null,
-        currentIndex: 0
+        currentIndex: 0,
       }
     },
-  mixins: [itemListenerMixin],
+  mixins: [itemListenerMixin, backTopMixin],
     components: {
       DetailComentInfo,
       DetailShopInfo,
@@ -67,7 +72,7 @@ export default {
       DetailCommentInfo,
       DetailBottomBar,
       Scroll,
-      GoodsList,
+      GoodsList
     },
     created() {
       console.log('-----',this.$route.params.iid)
@@ -89,6 +94,7 @@ export default {
       })
 
       /*
+      错误的获取方式
       this.$nextTick(() => {
         // 根据最新数据，对应的DOM渲染出来了。但是图片没有渲染下来（目前的offsetTop不包含其中的图片）
         // offsetTop值不对的时候，都是因为图片的问题
@@ -185,22 +191,38 @@ export default {
           }
         }
          */
-
         for(let i = 0; i < length-1; i++) {
-         if(this.currentIndex !==i && (positionY >= this.themeTopYs[i] && positionY < this.themeTopYs[i+1])) {
+          if (this.currentIndex !==i && (positionY >= this.themeTopYs[i] && positionY < this.themeTopYs[i+1])) {
            this.currentIndex = i
            this.$refs.navBar.currentIndex = this.currentIndex
-         }
+          }
         }
+        // 返回顶部
+        this.listenShowBackTop(position)
+      },
+      // 商品添加购物车
+      addToCart() {
+        // 获取购物车需要展示的信息
+        const product = {}
+        product.image = this.topImages[0];
+        product.title = this.goods.title;
+        product.desc = this.goods.desc;
+        product.price = this.goods.realPrice;
+        product.iid = this.iid;
+
+        // 将商品添加到购物车里面
+        // this.$store.cartList.push(product)
+        // this.$store.commit('addToCart', product)
+        this.$store.dispatch('addToCart', product)
       }
     },
-    mounted() {
-     // console.log('我是正常mounted的内容')
+  mounted() {
+   // console.log('我是正常mounted的内容')
 
-    },
+  },
   destroyed() {
-      this.$bus.$off(this.itemImgListener)
-    }
+    this.$bus.$off(this.itemImgListener)
+  }
 }
 </script>
 
