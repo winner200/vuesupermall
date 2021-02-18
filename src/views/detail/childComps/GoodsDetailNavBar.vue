@@ -31,8 +31,9 @@ export default {
   },
   methods: {
     titleClick(index) {
-      console.log('点击商品详情标题');
+      // console.log('点击商品详情标题');
       this.currentIndex = index
+      this.$emit('titleClick', index)
     },
     backClick() {
       this.$router.back()

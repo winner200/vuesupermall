@@ -15,3 +15,7 @@ export const itemListenerMixin = {
     // console.log('我是混入的mounted');
   }
 }
+
+export const backTopMixin = {
+
+}
