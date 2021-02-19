@@ -1,7 +1,8 @@
 <template>
   <div class="bottom-bar">
     <div class="bottom-check">
-      <check-buttom/>
+      <check-buttom
+        :isChecked="isSelectAll" @click.native="checkSelectAll"/>
       <span>全选</span>
     </div>
     <div class="total-price">
@@ -33,6 +34,33 @@ export default {
     },
     checkLength() {
       return this.cartList.filter(item=> item.check).length
+    },
+    isSelectAll() {
+
+      if(this.cartList.length === 0) return false;
+      // 1.使用数组的高阶函数 filter 44
+      // return !(this.cartList.filter(item => !item.check).length)
+
+      // 2.使用数组的高阶函数 find
+      // return !this.cartList.find(item => !item.check)
+
+      // 3.使用遍历
+      for (let item of this.cartList) {
+        if (!item.check) {
+          return false
+        }
+      }
+      return true
+    }
+  },
+  methods: {
+    checkSelectAll() {
+      console.log('全选按钮');
+      if(this.isSelectAll) { // 全部选中
+        this.cartList.forEach(item => item.check = false)
+      } else { // 部分或者全部不选中
+        this.cartList.forEach(item => item.check = true)
+      }
     }
   }
 }

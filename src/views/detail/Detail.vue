@@ -18,6 +18,7 @@
     </scroll>
     <back-top @click.native="backTopClick" v-show="isBackTopShow"/>
     <detail-bottom-bar class="bottom-bar" @addToCart="addToCart"/>
+    <toast :message="message" :show="show"/>
   </div>
 </template>
 
@@ -36,6 +37,7 @@ import DetailBottomBar from "./childComps/DetailBottomBar";
 import Scroll from "components/common/scroll/Scroll";
 
 import GoodsList from "components/content/goods/GoodsList";
+import Toast from "components/common/toast/Toast"
 
 import {getDetail, Goods, Shop, GoodsParam, getRecommend} from 'network/detail'
 
@@ -43,6 +45,7 @@ import {itemListenerMixin, backTopMixin} from "common/mixin";
 
 import {debounce} from "common/utils";
 
+import {mapActions} from 'vuex'
 export default {
     name: "Detail",
     data() {
@@ -58,6 +61,8 @@ export default {
         themeTopYs:[],
         getThemeTopY: null,
         currentIndex: 0,
+        message: '',
+        show: false
       }
     },
   mixins: [itemListenerMixin, backTopMixin],
@@ -72,7 +77,8 @@ export default {
       DetailCommentInfo,
       DetailBottomBar,
       Scroll,
-      GoodsList
+      GoodsList,
+      Toast
     },
     created() {
       console.log('-----',this.$route.params.iid)
@@ -109,6 +115,7 @@ export default {
        */
     },
     methods: {
+      ...mapActions(['addCart']),
       _getDetail() {
         // 1.根据iid请求详情数据
         getDetail(this.iid).then(res => {
@@ -131,11 +138,11 @@ export default {
           this.goodsParam = new GoodsParam(data.itemParams.info, data.itemParams.rule)
 
           // 6.取出评论信息
-          if(data.rate.cRate !== 0) {
+          if (data.rate.cRate !== 0) {
             this.commentInfo = data.rate.list[0]
           }
 
-        }).catch(error=> {
+        }).catch(error => {
           // console.log('商品详情数据请求失败', error)
         })
       },
@@ -144,7 +151,7 @@ export default {
       _getRecommend() {
         getRecommend().then(res => {
           this.recommends = res.data.list
-        }).catch(error=> {
+        }).catch(error => {
           // console.log('获取推荐数据失败')
         })
       },
@@ -159,7 +166,7 @@ export default {
       // 监听详情页tabbar点击
       titleClick(index) {
         console.log(index);
-        this.$refs.scroll.scrollTo(0, -this.themeTopYs[index]+44, 200)
+        this.$refs.scroll.scrollTo(0, -this.themeTopYs[index] + 44, 200)
       },
 
       // 监听滚动
@@ -191,10 +198,10 @@ export default {
           }
         }
          */
-        for(let i = 0; i < length-1; i++) {
-          if (this.currentIndex !==i && (positionY >= this.themeTopYs[i] && positionY < this.themeTopYs[i+1])) {
-           this.currentIndex = i
-           this.$refs.navBar.currentIndex = this.currentIndex
+        for (let i = 0; i < length - 1; i++) {
+          if (this.currentIndex !== i && (positionY >= this.themeTopYs[i] && positionY < this.themeTopYs[i + 1])) {
+            this.currentIndex = i
+            this.$refs.navBar.currentIndex = this.currentIndex
           }
         }
         // 返回顶部
@@ -210,11 +217,27 @@ export default {
         product.price = this.goods.realPrice;
         product.iid = this.iid;
 
-        // 将商品添加到购物车里面
+        // 将商品添加到购物车里面（1.Promise，2.mapActions）
         // this.$store.cartList.push(product)
         // this.$store.commit('addToCart', product)
-        this.$store.dispatch('addToCart', product)
-      }
+
+        // 调用vuex里面的actions方式1：
+        // this.$store.dispatch('addCart', product).then(res => {
+        //   console.log(res);
+        // })
+
+        // 调用vuex里面的actions方式2：actions里面的函数名称不能跟本实例的函数名称重复，否则报错
+        this.addCart(product).then(res => {
+          this.show = true
+          this.message = res
+
+          setTimeout(() => {
+            this.show = false
+            this.message = '';
+          }, 1500)
+          console.log(res);
+        })
+      },
     },
   mounted() {
    // console.log('我是正常mounted的内容')
