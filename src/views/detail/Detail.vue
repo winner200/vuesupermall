@@ -5,9 +5,9 @@
             ref="scroll"
             @scroll="contentScroll"
             :probe-type="3">
-      <ul>
-        <li v-for="item in $store.state.cartList">{{item}}</li>
-      </ul>
+<!--      <ul>-->
+<!--        <li v-for="item in $store.state.cartList">{{item}}</li>-->
+<!--      </ul>-->
       <goods-detail-swiper :swiper-images="topImages"/>
       <detail-base-info :goods-info="goods"/>
       <detail-shop-info :shop-info="shopInfo"/>
