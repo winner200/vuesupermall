@@ -18,7 +18,7 @@
     </scroll>
     <back-top @click.native="backTopClick" v-show="isBackTopShow"/>
     <detail-bottom-bar class="bottom-bar" @addToCart="addToCart"/>
-    <toast :message="message" :show="show"/>
+<!--    <toast :message="message" :show="show"/>-->
   </div>
 </template>
 
@@ -37,7 +37,7 @@ import DetailBottomBar from "./childComps/DetailBottomBar";
 import Scroll from "components/common/scroll/Scroll";
 
 import GoodsList from "components/content/goods/GoodsList";
-import Toast from "components/common/toast/Toast"
+// import Toast from "components/common/toast/Toast"
 
 import {getDetail, Goods, Shop, GoodsParam, getRecommend} from 'network/detail'
 
@@ -61,8 +61,8 @@ export default {
         themeTopYs:[],
         getThemeTopY: null,
         currentIndex: 0,
-        message: '',
-        show: false
+        // message: '',
+        // show: false
       }
     },
   mixins: [itemListenerMixin, backTopMixin],
@@ -78,7 +78,7 @@ export default {
       DetailBottomBar,
       Scroll,
       GoodsList,
-      Toast
+      // Toast
     },
     created() {
       console.log('-----',this.$route.params.iid)
@@ -228,6 +228,8 @@ export default {
 
         // 调用vuex里面的actions方式2：actions里面的函数名称不能跟本实例的函数名称重复，否则报错
         this.addCart(product).then(res => {
+         /*
+         // 1.普通的方式toast
           this.show = true
           this.message = res
 
@@ -235,7 +237,11 @@ export default {
             this.show = false
             this.message = '';
           }, 1500)
-          console.log(res);
+          console.log(res);*/
+
+          // 2.使用插件封装的方式toast
+          console.log(this.$toast)
+          this.$toast.show(res, 2000)
         })
       },
     },
