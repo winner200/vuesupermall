@@ -838,3 +838,112 @@ debounce(func, delay) {
   }
 ```
 
+---
+
+## Vue生命周期（函数钩子）补充
+
+#### 什么是生命周期
+
+> - 从Vue实例创建、运行、到销毁期间，总是伴随着各种各样的事件，这些事件统称为 **生命周期**
+> - 生命周期钩子：就是生命周期事件的别名而已。
+
+生命周期钩子：
+
+> - 生命周期钩子 = 生命周期函数 = 生命周期事件
+
+##### 主要的生命周期函数分类：
+
+创建期间生命周期函数
+
+> - beforeCreate：Vue实例刚在内存中被创建出来，此时，还没有初始化好data和methods属性
+> - created：实例已经在内存中创建OK，此时data和methods已经创建OK，此时还没有开始编译模板。
+> - beforeMount：此时已经完成模板的编译，但是还没有挂载到页面上。
+> - mounted：此时已经将编译好的模板，挂载到了页面指定的容器上显示。
+
+运行期间生命周期函数
+
+> - beforeUpadate：状态更新之前执行此函数，此时data中的状态值是最新的，但是页面上显示的数据还是旧的，因为此时还没有开始重新渲染DOM节点。
+> - updated：实例更新完毕之后调用此函数，此时data中的状态值 和 界面上显示的数据都已经完成了更新，界面已经被重新渲染好了。
+
+销毁期间生命周期函数
+
+> - beforeDestory：实例销毁之前调用，在这一步，实例仍然完全可以使用。
+> - destroyed：Vue实例销毁后调用，调用后，Vue实例指示的所有东西都会被解绑定，所有的事件监听都会被移除，所有的子实例也会被销毁。
+
+代码如下：
+
+```
+<body>
+<div id="app">
+  <input type="button" value="修改msg" @click="msg = 'No'">
+  {{msg}}
+  <div id="h3">{{msg}}</div>
+</div>
+
+<script src="./node_modules/vue/dist/vue.js"></script>
+<script>
+  const app = new Vue({
+    el: '#app',
+    data() {
+      return {
+        msg: 'ok'
+      }
+    },
+    methods: {
+      show() {
+        console.log('执行了show方法')
+      }
+    },
+    beforeCreate() {// 这是我们遇到的第一个生命周期函数，表示实例完全被创建出来执行。
+      // console.log(this.msg);
+      // this.show()
+      // 注意：在beforeCreate 生命周期函数执行的时候，data 和 methods 中的数据都还没有被初始化。
+    },
+
+    created() { // 这是遇到的第二个生命周期函数.
+      // console.log(this.msg);
+      // console.log(this.show);
+      // 在 created 中，data 和 methods 都已经被初始化好了。
+      // 如果要调用 methods 中的方法或者操作data中的数据，最早只能在created 中操作。
+    },
+
+    beforeMount() { //这是遇到的第三个生命周期函数， 表示 模板已经在内存中已经编译完成了，但是尚未把模板渲染到页面中去。
+      // console.log(document.getElementById('h3').innerText);
+
+      // 在 beforeMount 执行的时候，页面中的元素，还没有被真正的渲染出来，只是之前写的一些模板字符串。
+    },
+
+    mounted() { // 这是遇到的第四个生命周期函数，表示内存中的模板已经真实的挂载到了页面中，用户已经可以看到了渲染好的页面了。
+      // console.log(document.getElementById('h3').innerText);
+
+      // 注意：mounted 是 实例创建期间最后一个生命周期函数，当执行完 mounted 就表示，Vue实例已经被完全创建好了，此时，如果没有其他操作的话。这个实例就躺在内存中一动不动。
+      // 如果要通过某些插件操作页面上的DOM节点，最早要在mounted中进行。
+      // 只要执行完了 mounted 就表示整个Vue实例已经初始化完毕了，此时Vue已经脱离了创建阶段，进入了运行阶段。
+    },
+
+
+    // 接下来是运行中的两个事件
+    beforeUpdate() { // 这时候，表示，我们的界面还没有被更新 【数据被更新了吗？ 数据肯定被更新了】
+      // console.log('页面上的元素内容',document.getElementById('h3').innerText);
+      // console.log('data中的msg数据', this.msg)
+
+      // 当执行 beforeUpdate 的时候，页面中显示的数据还是旧的，此时data数据是最新的，页面尚未和最新的数据保持同步。
+    },
+    updated() {
+      console.log('页面上的元素内容',document.getElementById('h3').innerText);
+      console.log('data中的msg数据', this.msg)
+
+      // update 事件执行的时候，页面和data 数据已经保持同步了，都是最新的。
+    },
+    beforeDestroy() {
+      // 当执行 beforeDestory钩子函数的时候，Vue实例就已经从运行阶段，进入到了销毁阶段；
+      // 当执行 beforeDestroy 的时候，实例身上所有的data和所有的methods，以及过滤器，指令...都处于可用状态，此时还没有真正的执行销毁的过程。
+    },
+    destroyed() {
+      // 当执行到destroyed 钩子函数的时候，组件已经被完全销毁了，此时，组件中的所有的数据、方法、指令、过滤器....都已经不可用了。
+    }
+  })
+</script>
+</body>
+```
+
