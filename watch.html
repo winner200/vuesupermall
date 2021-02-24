@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vue的watch选项</title>
+</head>
+<body>
+  <div id="app">
+    <button @click="addCount">点击按钮增加</button>
+    <p>count的值为：{{count}}</p>
+    <hr>
+    <input type="text" v-model="student.name">
+    <input type="text" v-model="student.age">
+  </div>
+  <script src="./node_modules/vue/dist/vue.js"></script>
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        count: 0,
+        student: {
+          name: '张三',
+          age: 20
+        }
+      },
+      watch: {
+        // watch监视的目标就是data中的数据
+        count() {
+          // 触发条件：data中的count改变，自动触发。
+          console.log('count改变了')
+        },
+        // student() {// 这种写法是不能监听对象的。
+        //   console.log('student发生改变了')
+        // }
+        student: { // 对象形式 -> 深度监听
+          deep: true, // 表示开启深度监听
+          handler(val, oldval) {
+            console.log(oldval)
+            console.log('student发生了改变', val)
+          },
+          immediate: true, // 表示立即执行
+        }
+      },
+      methods: {
+        addCount() {
+          this.count ++
+        }
+      }
+    })
+  </script>
+</body>
+</html>
