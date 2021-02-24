@@ -11,6 +11,14 @@ export default {
   name: "TabContentCategory",
   components: {
     GridView
+  },
+  props: {
+    subcategories: {
+      type: Object,
+      default() {
+        return {}
+      }
+    }
   }
 }
 </script>
