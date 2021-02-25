@@ -6,6 +6,9 @@
     <div class="content">
       <tab-menu :categories="categories" @selectItem="selectItem"/>
     </div>
+    <scroll id="tab-content" :data="[categoryData]" style="overflow: hidden;">
+      <tab-content-category :subcategories="showSubcategory"/>
+    </scroll>
   </div>
 </template>
 
@@ -17,6 +20,9 @@ import {POP, NEW, SELL} from 'common/const'
 import TabMenu from "./childComps/TabMenu";
 
 import NavBar from "components/common/navbar/NavBar";
+import Scroll from "components/common/scroll/Scroll";
+
+import TabContentCategory from "./childComps/TabContentCategory";
 
 
 export default {
@@ -30,17 +36,26 @@ export default {
   },
   components: {
     TabMenu,
-    NavBar
+    NavBar,
+    Scroll,
+    TabContentCategory
   },
   created() {
     this._getCategory()
+  },
+  computed: {
+    showSubcategory() {
+      console.log('0000',this.categoryData)
+      // if(this.currentIndex === -1) {}
+      //   return this.categoryData[this.currentIndex].subcategories
+    }
   },
   methods: {
     _getCategory() {
       getCategory().then(res => {
         console.log('分类数据', res)
         this.categories = res.data.category.list
-        for (let i = 0; i < this.category.length; i++) {
+        for (let i = 0; i < this.categories.length; i++) {
           this.categoryData[i] = {
             subcategories: {},
             categoryDetail: {
@@ -59,9 +74,7 @@ export default {
     _getSubcategory(index) {
       this.currentIndex = index
       const mailKey = this.categories[index].maitKey;
-      console.log('-----',mailKey)
       getSubcategory(mailKey).then(res => {
-        console.log('fenleilei',res.data)
         this.categoryData[index].subcategories = res.data
         this.categoryData = {...this.categoryData}
 
@@ -103,5 +116,9 @@ export default {
     top: 44px;
     bottom: 49px;
     display: flex;
+  }
+  #tab-content {
+    height: 100%;
+    flex: 1;
   }
 </style>
