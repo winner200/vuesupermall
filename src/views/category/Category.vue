@@ -34,13 +34,24 @@ export default {
   },
   created() {
     this._getCategory()
-    this._getCategoryDetail()
   },
   methods: {
     _getCategory() {
       getCategory().then(res => {
         console.log('分类数据', res)
         this.categories = res.data.category.list
+        for (let i = 0; i < this.category.length; i++) {
+          this.categoryData[i] = {
+            subcategories: {},
+            categoryDetail: {
+              'pop': [],
+              'new': [],
+              'sell': []
+            }
+          }
+        }
+        // 请求第一个分类的数据
+        this._getCategoryDetail(0)
       }).catch(error=> {
 
       })
@@ -50,22 +61,24 @@ export default {
       const mailKey = this.categories[index].maitKey;
       console.log('-----',mailKey)
       getSubcategory(mailKey).then(res => {
-        console.log('------',res)
+        console.log('fenleilei',res.data)
         this.categoryData[index].subcategories = res.data
         this.categoryData = {...this.categoryData}
 
+        console.log('-----',this.categoryData)
+        this._getCategoryDetail(POP)
+        this._getCategoryDetail(SELL)
+        this._getCategoryDetail(NEW)
       })
-
-
     },
     _getCategoryDetail(type) {
       // 1.获取请求的miniWallkey
-      // const miniWallkey = this.categories[this.currentIndex].miniWallkey
-
+      const miniWallkey = this.categories[this.currentIndex].miniWallkey
       // 2.发送请求,传入miniWallkey和type
-      getCategoryDetail('10062603', 'pop').then(res => {
+      getCategoryDetail(miniWallkey, type).then(res => {
         console.log('分类数据详情',res)
-        // this.categoryData[this.currentIndex].categoryDetail[type] = res
+        this.categoryData[this.currentIndex].categoryDetail[type] = res
+        this.categoryData = {...this.categoryData}
       })
     },
     selectItem(index) {
