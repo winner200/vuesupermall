@@ -40,5 +40,28 @@ export const backTopMixin = {
       this.isBackTopShow = (-position.y) > 1000
     }
   }
+}
 
+export const tabControlMixin = {
+  data() {
+    return {
+      currentType: POP
+    }
+  },
+  methods: {
+    tabClick(index) {
+      console.log('idex', index)
+      switch (index) {
+        case 0:
+          this.currentType = POP
+          break;
+        case 1:
+          this.currentType = NEW
+          break;
+        case 2:
+          this.currentType = SELL
+          break;
+      }
+    }
+  }
 }

@@ -7,23 +7,28 @@
       <tab-menu :categories="categories" @selectItem="selectItem"/>
     </div>
     <scroll id="tab-content" :data="[categoryData]" style="overflow: hidden;">
-      <tab-content-category :subcategories="showSubcategory"/>
+      <div>
+        <tab-content-category :subcategories="showSubcategory"/>
+        <tab-control :titles="['综合', '新品', '销量']" @tabClick="tabClick"></tab-control>
+        <tab-content-detail :category-detail="showCategoryDetail"></tab-content-detail>
+      </div>
     </scroll>
   </div>
 </template>
 
 <script>
 import { getCategory, getSubcategory, getCategoryDetail } from "network/category";
+import  {tabControlMixin} from 'common/mixin'
 
 import {POP, NEW, SELL} from 'common/const'
 
-import TabMenu from "./childComps/TabMenu";
-
 import NavBar from "components/common/navbar/NavBar";
 import Scroll from "components/common/scroll/Scroll";
+import TabControl from "components/content/tabControl/TabControl";
 
+import TabMenu from "./childComps/TabMenu";
 import TabContentCategory from "./childComps/TabContentCategory";
-
+import TabContentDetail from './childComps/TabContentDetail'
 
 export default {
   name: "Category",
@@ -34,11 +39,14 @@ export default {
       currentIndex: -1
     }
   },
+  mixis: [tabControlMixin],
   components: {
     TabMenu,
     NavBar,
+    TabControl,
     Scroll,
-    TabContentCategory
+    TabContentCategory,
+    TabContentDetail
   },
   created() {
     this._getCategory()
@@ -46,8 +54,12 @@ export default {
   computed: {
     showSubcategory() {
       console.log('0000',this.categoryData)
-      // if(this.currentIndex === -1) {}
-      //   return this.categoryData[this.currentIndex].subcategories
+      if(this.currentIndex === -1) return {}
+        return this.categoryData[this.currentIndex].subcategories
+    },
+    showCategoryDetail() {
+      if(this.currentIndex === -1) return {}
+      return this.categoryData[this.currentIndex].categoryDetail[this.currentType]
     }
   },
   methods: {
@@ -77,8 +89,6 @@ export default {
       getSubcategory(mailKey).then(res => {
         this.categoryData[index].subcategories = res.data
         this.categoryData = {...this.categoryData}
-
-        console.log('-----',this.categoryData)
         this._getCategoryDetail(POP)
         this._getCategoryDetail(SELL)
         this._getCategoryDetail(NEW)
@@ -120,5 +130,6 @@ export default {
   #tab-content {
     height: 100%;
     flex: 1;
+    overflow: hidden;
   }
 </style>
