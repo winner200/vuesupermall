@@ -5,14 +5,14 @@
     </nav-bar>
     <div class="content">
       <tab-menu :categories="categories" @selectItem="selectItem"/>
+      <scroll id="tab-content" :data="[categoryData]">
+        <div>
+          <tab-content-category :subcategories="showSubcategory"/>
+          <tab-control :titles="['综合', '新品', '销量']" @tabClick="tabClick"></tab-control>
+          <tab-content-detail :category-detail="showCategoryDetail"></tab-content-detail>
+        </div>
+      </scroll>
     </div>
-    <scroll id="tab-content" :data="[categoryData]" style="overflow: hidden;">
-      <div>
-        <tab-content-category :subcategories="showSubcategory"/>
-        <tab-control :titles="['综合', '新品', '销量']" @tabClick="tabClick"></tab-control>
-        <tab-content-detail :category-detail="showCategoryDetail"></tab-content-detail>
-      </div>
-    </scroll>
   </div>
 </template>
 
@@ -39,7 +39,7 @@ export default {
       currentIndex: -1
     }
   },
-  mixis: [tabControlMixin],
+  mixins: [tabControlMixin],
   components: {
     TabMenu,
     NavBar,
