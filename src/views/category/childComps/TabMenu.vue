@@ -27,7 +27,6 @@ export default {
     this.$refs.scroll.refresh()
   },
   activated() {
-    console.log('wdebug 2021-2-22',this.$refs.scroll);
     this.$refs.scroll.refresh()
   },
   components: {

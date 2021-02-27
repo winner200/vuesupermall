@@ -5,7 +5,7 @@
     </nav-bar>
     <div class="content">
       <tab-menu :categories="categories" @selectItem="selectItem"/>
-      <scroll id="tab-content" :data="[categoryData]">
+      <scroll id="tab-content" ref="content">
         <div>
           <tab-content-category :subcategories="showSubcategory"/>
           <tab-control :titles="['综合', '新品', '销量']" @tabClick="tabClick"></tab-control>
@@ -49,7 +49,14 @@ export default {
     TabContentDetail
   },
   created() {
+    console.log('这不是威胁')
     this._getCategory()
+  },
+  mounted() {
+    this.$refs.content.scroll.refresh()
+  },
+  activated() {
+    this.$refs.content.scroll.refresh()
   },
   computed: {
     showSubcategory() {
@@ -58,7 +65,7 @@ export default {
         return this.categoryData[this.currentIndex].subcategories
     },
     showCategoryDetail() {
-      if(this.currentIndex === -1) return {}
+      if(this.currentIndex === -1) return []
       return this.categoryData[this.currentIndex].categoryDetail[this.currentType]
     }
   },
@@ -78,7 +85,7 @@ export default {
           }
         }
         // 请求第一个分类的数据
-        this._getCategoryDetail(0)
+        this._getSubcategory(0)
       }).catch(error=> {
 
       })
@@ -93,6 +100,8 @@ export default {
         this._getCategoryDetail(SELL)
         this._getCategoryDetail(NEW)
       })
+      console.log('wdebug 2021-02-27 17:51')
+      this.$refs.content.scroll.refresh()
     },
     _getCategoryDetail(type) {
       // 1.获取请求的miniWallkey
@@ -106,6 +115,7 @@ export default {
     },
     selectItem(index) {
       this._getSubcategory(index)
+
     }
   }
 }
